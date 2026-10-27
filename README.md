@@ -139,7 +139,7 @@ El **cliente HTTP** envía y recibe solicitudes. `src/lib/apiClient.ts` configur
 
 Estructura: src/views/ contiene pantallas; src/components/ piezas visuales; src/routes/ rutas y protecciones; src/controllers/ coordinación de vistas; src/services/ solicitudes; src/context/ estado compartido; src/schemas/ validación y src/types/ estructuras de datos.
 
-Hay 34 archivos de pruebas de Vitest en `src/`, incluidos flujos de interfaz y accesibilidad. No se ejecutaron durante esta documentación. La aplicación web no tiene Dockerfile ni docker-compose. El código no define una regla para clasificar cuentas de demostración. El equipo indica que el backend se despliega en Railway; la configuración del despliegue no está en el repositorio. Consulta el [inventario detallado de la aplicación web](../.claude/contexto/client.md).
+Hay 34 archivos de pruebas de Vitest en `src/`, incluidos flujos de interfaz y accesibilidad. No se ejecutaron durante esta documentación. La aplicación web no tiene Dockerfile ni docker-compose. El código no define una regla para clasificar cuentas de demostración. El equipo indica que el backend se despliega en Railway; la configuración del despliegue no está en el repositorio.
 
 ## Cómo se conecta con los otros proyectos
 
