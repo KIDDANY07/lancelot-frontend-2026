@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { APP_MODULES, canAccessModule } from '@/constants/navigation'
 import { useAppContext } from '@/hooks/useAppContext'
 import { useRole } from '@/hooks/useRole'
@@ -12,10 +13,16 @@ export function useAthleteSummaryController(idUser: number) {
   const { season } = useAppContext()
   const { role } = useRole()
   const idSeason = season?.id_season
+  const [riskPage, setRiskPage] = useState(1)
+
+  useEffect(() => {
+    setRiskPage(1)
+  }, [idUser, idSeason])
 
   const query = useQuery({
-    queryKey: queryKeys.athlete.summary(idUser, idSeason ?? 0),
-    queryFn: () => reportsService.seasonSummary(idUser, idSeason ?? 0),
+    queryKey: queryKeys.athlete.summaryRiskPage(idUser, idSeason ?? 0, riskPage),
+    queryFn: () =>
+      reportsService.seasonSummary(idUser, idSeason ?? 0, { page: riskPage, limit: 5 }),
     enabled: idSeason !== undefined,
   })
 
@@ -52,6 +59,8 @@ export function useAthleteSummaryController(idUser: number) {
     retry: () => void query.refetch(),
     summary,
     openAlerts,
+    riskAssessmentsPagination: summary?.injury_risk_assessments_pagination,
+    setRiskPage,
     healthInboxPath: canAccessModule('health', role)
       ? `${APP_MODULES.health.path}?tab=alertas`
       : null,
