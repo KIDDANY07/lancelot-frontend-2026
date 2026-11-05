@@ -14,9 +14,14 @@ const SCORE_KEYS = [
 ] as const
 
 export const reportsService = {
-  async seasonSummary(idUser: number, idSeason: number): Promise<SeasonSummary> {
+  async seasonSummary(
+    idUser: number,
+    idSeason: number,
+    pagination?: { page: number; limit: number },
+  ): Promise<SeasonSummary> {
     const { data } = await apiClient.http.get<{ summary: SeasonSummary }>(
       `/reports/season-summary/${idUser}/${idSeason}`,
+      { params: pagination },
     )
     const { summary } = data
     return {

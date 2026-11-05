@@ -128,6 +128,8 @@ export const queryKeys = {
       [...queryKeys.athlete.all(idUser), 'loads', page] as const,
     summary: (idUser: number, idSeason: number) =>
       [...queryKeys.athlete.all(idUser), 'summary', idSeason] as const,
+    summaryRiskPage: (idUser: number, idSeason: number, page: number) =>
+      [...queryKeys.athlete.all(idUser), 'summary', idSeason, 'risk-page', page] as const,
     comparison: (idUser: number) => [...queryKeys.athlete.all(idUser), 'comparison'] as const,
     injuries: (idUser: number) => [...queryKeys.athlete.all(idUser), 'injuries'] as const,
     healthRecords: (idUser: number) =>

@@ -6,6 +6,7 @@ import { ErrorState } from '@/components/common/ErrorState'
 import { KpiCard } from '@/components/common/KpiCard'
 import { LevelBadge } from '@/components/common/LevelBadge'
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton'
+import { PaginationNav } from '@/components/common/PaginationNav'
 import { Button } from '@/components/ui/button'
 import { useAthleteSummaryController } from '@/controllers/athletes/useAthleteSummaryController'
 import { formatDate } from '@/utils/formatDate'
@@ -111,6 +112,15 @@ export function AthleteSummaryTab({ idUser }: { idUser: number }) {
               ))}
             </ul>
           )}
+          {controller.riskAssessmentsPagination &&
+            controller.riskAssessmentsPagination.totalPages > 1 && (
+              <PaginationNav
+                label="Paginación de evaluaciones de riesgo de lesión"
+                pagination={controller.riskAssessmentsPagination}
+                onPageChange={controller.setRiskPage}
+                itemsLabel="evaluaciones de riesgo abiertas"
+              />
+            )}
         </section>
       </div>
 

@@ -10,6 +10,7 @@ import type {
   Vo2TestMethod,
 } from '@/constants/enums'
 import type { FatigueAlert, InjuryRiskAssessment } from '@/types/club'
+import type { Pagination } from '@/types/api'
 
 export interface PhysicalEvaluation {
   id_eval: number
@@ -193,6 +194,7 @@ export interface SeasonSummary {
   }
   fatigue_alerts: FatigueAlert[]
   injury_risk_assessments: InjuryRiskAssessment[]
+  injury_risk_assessments_pagination?: Pagination
   weighted_progress_index: ProgressIndex | null
 }
 
