@@ -35,7 +35,7 @@ const CONFIRMATIONS: Record<
   activate: {
     label: 'Activar',
     description: () =>
-      'Reemplaza al modelo activo. El backend verifica que no sea sintético, que se cumpla la readiness y que supere a las reglas.',
+      'Reemplaza al modelo activo de su misma tarea. El backend verifica que use las variables actuales e informa si aún no se cumple la readiness o si no supera a las reglas.',
   },
   deactivate: {
     label: 'Desactivar',
@@ -97,7 +97,7 @@ function PrAucComparison({ model }: { model: MlModel }) {
       <p className="text-xs text-muted-foreground">
         {beats
           ? 'El modelo supera a las reglas en este conjunto de prueba.'
-          : 'El modelo no supera a las reglas: no se puede activar.'}
+          : 'El modelo no supera a las reglas: conviene usarlo en modo shadow.'}
       </p>
     </figure>
   )
@@ -111,7 +111,6 @@ function ModelStatus({ model }: { model: MlModel }) {
         tone={ML_MODEL_TASK.tones[model.task]}
       />
       {model.is_active && <StatusBadge label="Activo" tone="success" />}
-      {model.is_synthetic && <StatusBadge label="Sintético" tone="warning" />}
     </div>
   )
 }
@@ -201,8 +200,9 @@ export function ModelsTab() {
     <div className="flex flex-col gap-4">
       <p className="text-sm text-pretty text-muted-foreground">
         Los modelos los entrena el servicio de ML y se registran aquí: uno de riesgo de lesión y
-        otro de talento. Para activarlos deben ser reales (no sintéticos), cumplirse la readiness de
-        su tarea y superar a las reglas. Activar uno solo reemplaza al activo de su misma tarea.
+        otro de talento. Compara su PR-AUC con la de las reglas antes de activarlos; si no las
+        supera, conviene usarlo en modo shadow. Activar uno solo reemplaza al activo de su misma
+        tarea.
       </p>
 
       {controller.canManage && (
@@ -309,12 +309,6 @@ export function ModelsTab() {
 
                         <PrAucComparison model={model} />
 
-                        {model.is_synthetic && (
-                          <p className="text-xs text-muted-foreground">
-                            Un modelo sintético solo sirve para probar el flujo y nunca se puede
-                            activar.
-                          </p>
-                        )}
                         {rejection && <RejectionAlert message={rejection} />}
 
                         {controller.canManage && (

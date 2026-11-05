@@ -112,7 +112,6 @@ const MODEL: MlModel = {
   train_to: '2026-07-31',
   test_from: '2026-08-01',
   test_to: '2026-09-15',
-  is_synthetic: true,
   is_active: false,
 }
 
@@ -221,7 +220,6 @@ beforeEach(() => {
         id_model: 4,
         version: 'talento-rf-1',
         task: 'talent',
-        is_synthetic: false,
         is_active: true,
       },
     ],
@@ -265,7 +263,8 @@ describe('análisis IA', () => {
       'Datos',
     ])
     await user.click(screen.getByRole('tab', { name: 'Modelos' }))
-    expect(await screen.findByText('Sintético')).toBeInTheDocument()
+    expect(await screen.findByText('xgb-2026-09')).toBeInTheDocument()
+    expect(screen.queryByText('Sintético')).not.toBeInTheDocument()
     expect(screen.getByText('Talento')).toBeInTheDocument()
     expect(screen.getByText('Riesgo de lesión')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Activar' })).not.toBeInTheDocument()
@@ -382,7 +381,7 @@ describe('análisis IA', () => {
     vi.mocked(mlService.activateModel).mockRejectedValue(
       createApiError(400, {
         status: 'Error',
-        mensaje: 'Un modelo sintético no puede activarse',
+        mensaje: 'El modelo usa las variables v0 y el snapshot actual genera v1',
       }),
     )
     signInAs(ADMIN_USER)
@@ -395,7 +394,7 @@ describe('análisis IA', () => {
     await user.click(within(confirm).getByRole('button', { name: 'Activar' }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Un modelo sintético no puede activarse',
+      'El modelo usa las variables v0 y el snapshot actual genera v1',
     )
     expect(mlService.activateModel).toHaveBeenCalledWith(3)
   })

@@ -123,7 +123,6 @@ export interface MlModel {
   train_to: string
   test_from: string
   test_to: string
-  is_synthetic: boolean
   is_active: boolean
   notes?: string | null
   created_at?: string
