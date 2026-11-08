@@ -92,7 +92,15 @@ describe('estructura de la aplicación', () => {
       within(nav)
         .getAllByRole('link')
         .map((link) => link.textContent),
-    ).toEqual(['Inicio', 'Club', 'Deportistas', 'Entrenamiento', 'Salud', 'Talento y progreso'])
+    ).toEqual([
+      'Inicio',
+      'Club',
+      'Deportistas',
+      'Entrenamiento',
+      'Salud',
+      'Talento y progreso',
+      'Tablero',
+    ])
     expect(await screen.findAllByText(ACTIVE_SEASON.name)).not.toHaveLength(0)
   })
 

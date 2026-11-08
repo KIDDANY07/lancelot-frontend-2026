@@ -16,6 +16,7 @@ describe('módulos por rol', () => {
       'Salud',
       'Talento y progreso',
       'Análisis IA',
+      'Tablero',
     ])
   })
 
@@ -32,11 +33,22 @@ describe('módulos por rol', () => {
       'Entrenamiento',
       'Salud',
       'Análisis IA',
+      'Tablero',
     ])
   })
 
-  it('muestra al deportista solo su espacio, su ficha y su entrenamiento', () => {
-    expect(labelsFor('DEPORTISTA')).toEqual(['Mi espacio', 'Mi ficha', 'Mi entrenamiento'])
+  it('muestra al deportista solo su espacio, su ficha, su entrenamiento y su tablero', () => {
+    expect(labelsFor('DEPORTISTA')).toEqual([
+      'Mi espacio',
+      'Mi ficha',
+      'Mi entrenamiento',
+      'Mi tablero',
+    ])
+  })
+
+  it('muestra el tablero a todo el cuerpo técnico', () => {
+    for (const role of ['ADMIN', 'DIRECTOR_TECNICO', 'ENTRENADOR', 'ENCARGADO_SALUD'] as RoleCode[])
+      expect(canAccessModule('dashboard', role)).toBe(true)
   })
 
   it('reserva la configuración al administrador y al director técnico', () => {

@@ -1,6 +1,7 @@
 import {
   Activity,
   BrainCircuit,
+  ChartNoAxesCombined,
   HeartPulse,
   LayoutDashboard,
   Settings,
@@ -12,7 +13,15 @@ import {
 import type { RoleCode } from '@/constants/roles'
 
 export type ModuleKey =
-  'home' | 'club' | 'athletes' | 'training' | 'health' | 'talent' | 'analytics' | 'settings'
+  | 'home'
+  | 'club'
+  | 'athletes'
+  | 'training'
+  | 'health'
+  | 'talent'
+  | 'analytics'
+  | 'settings'
+  | 'dashboard'
 
 export interface AppModule {
   key: ModuleKey
@@ -87,6 +96,16 @@ export const APP_MODULES: Record<ModuleKey, AppModule> = {
     icon: BrainCircuit,
     roles: ['ADMIN', 'DIRECTOR_TECNICO', 'ENCARGADO_SALUD'],
   },
+  dashboard: {
+    key: 'dashboard',
+    path: '/app/tablero',
+    label: 'Tablero',
+    description:
+      'Indicadores de carga, riesgo de lesión, modelo de ML, talento y calidad de datos a partir de los registros del club.',
+    icon: ChartNoAxesCombined,
+    roles: [...STAFF, 'DEPORTISTA'],
+    labelByRole: { DEPORTISTA: 'Mi tablero' },
+  },
   settings: {
     key: 'settings',
     path: '/app/configuracion',
@@ -105,6 +124,7 @@ export const SIDEBAR_MODULE_ORDER: ModuleKey[] = [
   'health',
   'talent',
   'analytics',
+  'dashboard',
 ]
 
 export const MOBILE_PRIMARY_COUNT = 4

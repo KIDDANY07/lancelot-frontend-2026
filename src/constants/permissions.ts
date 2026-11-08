@@ -23,6 +23,10 @@ export const PERMISSIONS = {
   viewMlData: ['ADMIN', 'ENCARGADO_SALUD'],
   viewValidation: ['ADMIN', 'DIRECTOR_TECNICO', 'ENCARGADO_SALUD'],
   createAthleteAccounts: ['ADMIN'],
+  viewDashboardTeam: ['ADMIN', 'DIRECTOR_TECNICO', 'ENTRENADOR', 'ENCARGADO_SALUD'],
+  viewDashboardHealth: ['ADMIN', 'ENTRENADOR', 'ENCARGADO_SALUD'],
+  viewDashboardDevelopment: ['ADMIN', 'DIRECTOR_TECNICO', 'ENTRENADOR', 'DEPORTISTA'],
+  viewDashboardMl: ['ADMIN', 'DIRECTOR_TECNICO', 'ENCARGADO_SALUD'],
 } satisfies Record<string, RoleCode[]>
 
 export type Permission = keyof typeof PERMISSIONS

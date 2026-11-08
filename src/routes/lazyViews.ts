@@ -14,6 +14,7 @@ export const TrainingView = lazy(() => import('@/views/app/training/TrainingView
 export const HealthView = lazy(() => import('@/views/app/health/HealthView'))
 export const TalentView = lazy(() => import('@/views/app/talent/TalentView'))
 export const AnalyticsView = lazy(() => import('@/views/app/analytics/AnalyticsView'))
+export const DashboardView = lazy(() => import('@/views/app/dashboard/DashboardView'))
 export const SettingsView = lazy(() => import('@/views/app/settings/SettingsView'))
 export const ForbiddenView = lazy(() => import('@/views/errors/ForbiddenView'))
 export const DataPolicyView = lazy(() => import('@/views/legal/DataPolicyView'))

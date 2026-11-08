@@ -126,8 +126,13 @@ Las **rutas** son direcciones dentro de la página. El acceso depende del rol de
 | Salud | /app/salud | Alertas, lesiones, registros y consentimientos, según permisos. |
 | Talento y progreso | /app/talento | Índices, rankings, alertas y planificación. |
 | Análisis IA | /app/analisis | Estado del análisis, datos, calidad y disponibilidad de los datos. |
+| Tablero | /app/tablero | Indicadores del club por temporada y categoría; el deportista ve «Mi tablero» con sus datos. |
 
 La página pública usa la ruta `/`. Los componentes están en `src/components/`; las rutas, en `src/routes/appRoutes.tsx` y `src/constants/navigation.ts`.
+
+### Tablero
+
+La vista `src/views/app/dashboard/DashboardView.tsx` organiza el tablero en pestañas (`?tab=`): General, Entrenamiento, Partidos, Salud, Desarrollo y talento, y Modelo de ML, según el rol. Cada pestaña está en `src/components/modules/dashboard/tabs/` y pide sus datos con los hooks de `src/controllers/dashboard/useDashboardTabs.ts`. Las gráficas reutilizables (`InteractiveBarChart`, `InteractiveLineChart`, `PartToWholeDonut`, `SmallMultiples`) están en `src/components/charts/interactive/`: tienen tooltip, leyenda que oculta series, clic opcional y vista de tabla. Usan Recharts y los colores de `src/constants/chartColors.ts`. El tablero toma la temporada y la categoría del selector de la parte superior.
 
 ### Estado, sesión y conexión con la API
 

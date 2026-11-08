@@ -2,6 +2,7 @@ import { CONFIG_DEFINITIONS } from '@/constants/configFields'
 import { apiClient } from '@/lib/apiClient'
 import type { ApiMessage } from '@/types/api'
 import type { ConfigKind, ConfigValues, ScopedConfig } from '@/types/config'
+import { getApiErrorStatus } from '@/utils/parseApiError'
 
 type RawConfig = Record<string, unknown>
 
@@ -36,10 +37,15 @@ export const configService = {
 
   async listOverrides(kind: ConfigKind): Promise<ScopedConfig[]> {
     const definition = CONFIG_DEFINITIONS[kind]
-    const { data } = await apiClient.http.get<Record<string, RawConfig[]>>(
-      `${definition.endpoint}/categories`,
-    )
-    return (data[definition.listKey] ?? []).map((raw) => toScopedConfig(kind, raw))
+    try {
+      const { data } = await apiClient.http.get<Record<string, RawConfig[]>>(
+        `${definition.endpoint}/categories`,
+      )
+      return (data[definition.listKey] ?? []).map((raw) => toScopedConfig(kind, raw))
+    } catch (error) {
+      if (getApiErrorStatus(error) === 404) return []
+      throw error
+    }
   },
 
   async update(

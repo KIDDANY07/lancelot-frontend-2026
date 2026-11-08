@@ -80,6 +80,11 @@ export const queryKeys = {
     features: (filters: QueryParams) => [...queryKeys.ml.all, 'features', filters] as const,
     validation: (range: QueryParams) => [...queryKeys.ml.all, 'validation', range] as const,
   },
+  dashboard: {
+    all: ['dashboard'] as const,
+    section: (section: string, filters: QueryParams) =>
+      [...queryKeys.dashboard.all, section, filters] as const,
+  },
   config: {
     all: (kind: string) => ['config', kind] as const,
     active: (kind: string, idCategory: number | null) =>
