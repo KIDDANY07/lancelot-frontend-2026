@@ -41,4 +41,4 @@ export const HUMAN_REVIEW_NOTE =
   'Son sugerencias para que el cuerpo técnico las revise; no son decisiones automáticas.'
 
 export type DashboardTab =
-  'general' | 'entrenamiento' | 'partidos' | 'salud' | 'desarrollo' | 'modelo'
+  'resumen' | 'general' | 'entrenamiento' | 'partidos' | 'salud' | 'desarrollo' | 'modelo'

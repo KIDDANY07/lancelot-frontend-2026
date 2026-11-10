@@ -286,3 +286,89 @@ export interface DashboardMl {
   } | null
   warnings: string[]
 }
+
+export interface DashboardSummaryDimensions {
+  physical: number | null
+  technical: number | null
+  tactical: number | null
+  participation: number | null
+}
+
+export interface DashboardSummaryModel {
+  task: 'talent' | 'injury_risk'
+  version: string
+  algorithm: string
+  pr_auc: number | null
+  rules_pr_auc: number | null
+  beats_rules: boolean | null
+}
+
+export interface DashboardSummary {
+  filters: {
+    id_season: number | null
+    id_category: number | null
+    season_name: string | null
+    category_name: string | null
+    from: string | null
+    to: string | null
+    all_history: boolean
+  }
+  users: { total: number; by_role: { role: string; total: number }[] } | null
+  records: {
+    athletes: number
+    athletes_with_load: number
+    categories: number
+    seasons: number
+    sessions: number
+    rpe_loads: number
+    matches: number
+    injuries: number
+    non_contact_injuries: number
+    contact_injuries: number
+    active_injuries: number
+  }
+  load: {
+    avg_rpe: number | null
+    avg_session_load: number | null
+    acwr_thresholds: { low_min: number; low_max: number; medium_max: number }
+  }
+  fatigue_alerts: { total: number; alto: number; medio: number; bajo: number; open: number }
+  risk_assessments: { total: number; alto: number; medio: number; open: number }
+  risk_rules: {
+    acwr_threshold: number
+    acwr_min_days: number
+    acwr_lookback_days: number
+    rpe_threshold: number
+    rpe_min_sessions: number
+    rpe_lookback_days: number
+  }
+  development: {
+    progress: {
+      id_season: number
+      season_name: string | null
+      athletes: number
+      average: DashboardSummaryDimensions & { index_value: number | null }
+      top:
+        | (DashboardSummaryDimensions & {
+            id_user: number
+            index_value: number | null
+            position: string | null
+            category: string | null
+          })
+        | null
+    } | null
+    talent_flags: { total: number; open: number; rules: number; ml: number; manual: number }
+    talent_rules: {
+      min_percentile: number
+      min_dimension_score: number
+      min_improvement_delta: number
+      min_participation_score: number
+    }
+  } | null
+  ml: {
+    engine: 'rules' | 'shadow' | 'ml'
+    talent_engine: 'rules' | 'shadow' | 'ml'
+    models: DashboardSummaryModel[]
+  } | null
+  warnings: string[]
+}

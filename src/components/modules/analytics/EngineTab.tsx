@@ -98,8 +98,11 @@ function EngineForm({
         </legend>
         <ModeOptions name="engine-mode" modes={modes} value={draft.mode} onChange={draft.setMode} />
         <p className="text-xs text-muted-foreground">
-          El modo sombra necesita un modelo activo. El modo de aprendizaje automático además exige
-          la readiness{isReady ? ', que ya se cumple.' : ', que aún no se cumple.'}
+          El modo sombra y el de aprendizaje automático necesitan un modelo activo. La readiness es
+          informativa y no bloquea el cambio
+          {isReady
+            ? ': ya se cumple.'
+            : ': aún no se cumple, así que el modelo puede ser poco confiable.'}
         </p>
       </fieldset>
 
@@ -157,9 +160,11 @@ function EngineForm({
         />
         <p className="text-xs text-muted-foreground">
           El modelo de talento corre cada vez que se detecta talento: al cerrar la temporada o con
-          «Detectar talento». El modo sombra necesita un modelo de talento activo; el de aprendizaje
-          automático además exige su readiness
-          {isTalentReady ? ', que ya se cumple.' : ', que aún no se cumple.'}
+          «Detectar talento». El modo sombra y el de aprendizaje automático necesitan un modelo de
+          talento activo. Su readiness es informativa
+          {isTalentReady
+            ? ': ya se cumple.'
+            : ': aún no se cumple, así que el modelo puede ser poco confiable.'}
         </p>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="engine-talent-threshold">Sugerir señalización desde</Label>

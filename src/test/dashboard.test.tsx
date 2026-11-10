@@ -20,6 +20,7 @@ import type {
   DashboardLoad,
   DashboardOverview,
   DashboardScope,
+  DashboardSummary,
 } from '@/types/dashboard'
 import type { User } from '@/types/user'
 import { REFRESH_TOKEN_STORAGE_KEY } from '@/utils/tokenStorage'
@@ -84,6 +85,7 @@ vi.mock('@/services/dashboardService', () => ({
     health: vi.fn(),
     development: vi.fn(),
     ml: vi.fn(),
+    summary: vi.fn(),
   },
 }))
 
@@ -373,6 +375,110 @@ const ML: DashboardMl = {
   ],
 }
 
+const SUMMARY: DashboardSummary = {
+  filters: {
+    id_season: null,
+    id_category: null,
+    season_name: null,
+    category_name: null,
+    from: null,
+    to: null,
+    all_history: true,
+  },
+  users: {
+    total: 19,
+    by_role: [
+      { role: 'ADMIN', total: 1 },
+      { role: 'DIRECTOR_TECNICO', total: 1 },
+      { role: 'ENTRENADOR', total: 1 },
+      { role: 'ENCARGADO_SALUD', total: 1 },
+      { role: 'DEPORTISTA', total: 15 },
+    ],
+  },
+  records: {
+    athletes: 15,
+    athletes_with_load: 15,
+    categories: 4,
+    seasons: 4,
+    sessions: 246,
+    rpe_loads: 2891,
+    matches: 114,
+    injuries: 31,
+    non_contact_injuries: 23,
+    contact_injuries: 8,
+    active_injuries: 1,
+  },
+  load: {
+    avg_rpe: null,
+    avg_session_load: 391.7,
+    acwr_thresholds: { low_min: 0.8, low_max: 1.3, medium_max: 1.5 },
+  },
+  fatigue_alerts: { total: 2965, alto: 2264, medio: 701, bajo: 0, open: 2964 },
+  risk_assessments: { total: 1069, alto: 216, medio: 853, open: 1069 },
+  risk_rules: {
+    acwr_threshold: 1.5,
+    acwr_min_days: 2,
+    acwr_lookback_days: 7,
+    rpe_threshold: 8,
+    rpe_min_sessions: 3,
+    rpe_lookback_days: 14,
+  },
+  development: {
+    progress: {
+      id_season: 4,
+      season_name: '2026-2',
+      athletes: 15,
+      average: {
+        index_value: 62.4,
+        physical: 54.2,
+        technical: 69.3,
+        tactical: 68.1,
+        participation: 56.6,
+      },
+      top: {
+        id_user: 21,
+        index_value: 84.5,
+        position: 'Ala',
+        category: 'Sub-15',
+        physical: 100,
+        technical: 81.4,
+        tactical: 81,
+        participation: 75.5,
+      },
+    },
+    talent_flags: { total: 52, open: 49, rules: 18, ml: 33, manual: 1 },
+    talent_rules: {
+      min_percentile: 80,
+      min_dimension_score: 40,
+      min_improvement_delta: 5,
+      min_participation_score: 50,
+    },
+  },
+  ml: {
+    engine: 'shadow',
+    talent_engine: 'ml',
+    models: [
+      {
+        task: 'talent',
+        version: 'talento-lr-1',
+        algorithm: 'LogisticRegression',
+        pr_auc: 0.771,
+        rules_pr_auc: 0.629,
+        beats_rules: true,
+      },
+      {
+        task: 'injury_risk',
+        version: 'lr-1',
+        algorithm: 'LogisticRegression',
+        pr_auc: 0.045,
+        rules_pr_auc: 0.068,
+        beats_rules: false,
+      },
+    ],
+  },
+  warnings: [],
+}
+
 function signInAs(user: User) {
   window.localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, 'refresh-guardado')
   vi.mocked(authService.refreshSession).mockResolvedValue('access-renovado')
@@ -400,6 +506,7 @@ beforeEach(() => {
   vi.mocked(dashboardService.health).mockResolvedValue(HEALTH)
   vi.mocked(dashboardService.development).mockResolvedValue(DEVELOPMENT)
   vi.mocked(dashboardService.ml).mockResolvedValue(ML)
+  vi.mocked(dashboardService.summary).mockResolvedValue(SUMMARY)
 })
 
 async function tabNames() {
@@ -414,10 +521,21 @@ describe('tablero', () => {
     const cases: [User, string[]][] = [
       [
         ADMIN_USER,
-        ['General', 'Entrenamiento', 'Partidos', 'Salud', 'Desarrollo y talento', 'Modelo de ML'],
+        [
+          'Resumen',
+          'General',
+          'Entrenamiento',
+          'Partidos',
+          'Salud',
+          'Desarrollo y talento',
+          'Modelo de ML',
+        ],
       ],
-      [COACH_USER, ['General', 'Entrenamiento', 'Partidos', 'Salud', 'Desarrollo y talento']],
-      [HEALTH_USER, ['General', 'Entrenamiento', 'Partidos', 'Salud', 'Modelo de ML']],
+      [
+        COACH_USER,
+        ['Resumen', 'General', 'Entrenamiento', 'Partidos', 'Salud', 'Desarrollo y talento'],
+      ],
+      [HEALTH_USER, ['Resumen', 'General', 'Entrenamiento', 'Partidos', 'Salud', 'Modelo de ML']],
       [ATHLETE_USER, ['General', 'Entrenamiento', 'Partidos', 'Desarrollo y talento']],
     ]
     for (const [user, expected] of cases) {
@@ -606,5 +724,38 @@ describe('tablero', () => {
     expect(
       await screen.findByText(new RegExp(`Temporada ${ACTIVE_SEASON.name}`)),
     ).toBeInTheDocument()
+  })
+
+  it('resume en «Resumen» lo registrado, las alertas, el talento y los modelos', async () => {
+    signInAs(ADMIN_USER)
+    const { router } = renderAppAt('/app/tablero?tab=resumen')
+
+    const club = await section('Resumen del club')
+    expect(await within(club).findByText('2.891')).toBeInTheDocument()
+    expect(dashboardService.summary).toHaveBeenCalledWith({})
+    expect(within(club).getByText(/23 sin contacto/)).toBeInTheDocument()
+    expect(within(club).getByText(/1 administrador · .* · 15 deportistas/)).toBeInTheDocument()
+    const alerts = await section('Alertas')
+    expect(within(alerts).getByText('2.965')).toBeInTheDocument()
+    expect(within(alerts).getByText('Alto 2.264')).toBeInTheDocument()
+    const progress = await section('Progreso y talento')
+    expect(within(progress).getByText('84,5')).toBeInTheDocument()
+    expect(within(progress).getByText('52')).toBeInTheDocument()
+    const models = await section('Modelos de ML')
+    expect(within(models).getByText('Supera a las reglas')).toBeInTheDocument()
+    expect(within(models).getByText('No supera a las reglas')).toBeInTheDocument()
+    expect(within(models).getByText(/modo sombra, deciden las reglas/)).toBeInTheDocument()
+    await userEvent.click(within(progress).getByRole('button', { name: /Ver ficha/ }))
+    await waitFor(() => expect(router.state.location.pathname).toBe('/app/deportistas/21'))
+  })
+
+  it('oculta en «Resumen» lo que el rol no ve en otras pestañas', async () => {
+    signInAs(COACH_USER)
+    vi.mocked(dashboardService.summary).mockResolvedValue({ ...SUMMARY, users: null, ml: null })
+    renderAppAt('/app/tablero?tab=resumen')
+
+    expect(await section('Progreso y talento')).toBeInTheDocument()
+    expect(screen.queryByText('Usuarios registrados')).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Modelos de ML' })).not.toBeInTheDocument()
   })
 })

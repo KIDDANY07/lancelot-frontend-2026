@@ -1,6 +1,7 @@
 import type { DashboardScopeState } from '@/controllers/dashboard/useDashboardScope'
 import { useDashboardSection } from '@/controllers/dashboard/useDashboardSection'
 import { dashboardService } from '@/services/dashboardService'
+import type { DashboardFilters } from '@/types/dashboard'
 
 export function useGeneralTab(scope: DashboardScopeState) {
   const team = scope.can('viewDashboardTeam')
@@ -51,4 +52,10 @@ export function useDevelopmentTab(scope: DashboardScopeState) {
 
 export function useMlTab(scope: DashboardScopeState) {
   return useDashboardSection('ml', dashboardService.ml, scope.params, scope.ready)
+}
+
+const ALL_HISTORY: DashboardFilters = {}
+
+export function useSummaryTab(scope: DashboardScopeState) {
+  return useDashboardSection('summary', dashboardService.summary, ALL_HISTORY, scope.ready)
 }

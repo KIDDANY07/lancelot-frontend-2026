@@ -11,6 +11,7 @@ import type {
   DashboardInjuryRisk,
   DashboardLoad,
   DashboardOverview,
+  DashboardSummary,
 } from '@/types/dashboard'
 
 interface DashboardEnvelope<T> {
@@ -70,5 +71,9 @@ export const dashboardService = {
 
   ml(filters: DashboardFilters) {
     return get<DashboardMl>('/dashboard/ml', filters)
+  },
+
+  summary(filters: DashboardFilters) {
+    return get<DashboardSummary>('/dashboard/summary', filters)
   },
 }

@@ -6,6 +6,7 @@ import { GeneralTab } from '@/components/modules/dashboard/tabs/GeneralTab'
 import { HealthTab } from '@/components/modules/dashboard/tabs/HealthTab'
 import { MatchesTab } from '@/components/modules/dashboard/tabs/MatchesTab'
 import { MlTab } from '@/components/modules/dashboard/tabs/MlTab'
+import { SummaryTab } from '@/components/modules/dashboard/tabs/SummaryTab'
 import { TrainingTab } from '@/components/modules/dashboard/tabs/TrainingTab'
 import { DATA_ORIGIN_NOTE, type DashboardTab } from '@/constants/dashboard'
 import { APP_MODULES, moduleLabel } from '@/constants/navigation'
@@ -21,6 +22,12 @@ interface TabDefinition {
 }
 
 const TABS: TabDefinition[] = [
+  {
+    value: 'resumen',
+    label: 'Resumen',
+    permission: 'viewDashboardTeam',
+    render: (scope) => <SummaryTab scope={scope} />,
+  },
   { value: 'general', label: 'General', render: (scope) => <GeneralTab scope={scope} /> },
   {
     value: 'entrenamiento',
