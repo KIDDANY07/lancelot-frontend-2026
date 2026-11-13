@@ -24,6 +24,15 @@ export function PartnerSection() {
         <p className="max-w-2xl text-base text-pretty text-muted-foreground sm:text-lg">
           {PARTNER_CONTENT.description}
         </p>
+        <p className="max-w-2xl text-sm text-pretty text-muted-foreground">
+          {PARTNER_CONTENT.source}{' '}
+          <a
+            href={`#${LANDING_SECTION_IDS.foundation}`}
+            className="font-medium text-primary underline-offset-4 hover:underline"
+          >
+            Ver el fundamento
+          </a>
+        </p>
       </Reveal>
     </section>
   )

@@ -28,6 +28,7 @@ export function PrivacySection() {
             <p className="mt-2 text-sm text-pretty text-muted-foreground">
               {principle.description}
             </p>
+            <p className="mt-auto pt-4 text-xs text-muted-foreground italic">{principle.source}</p>
           </Reveal>
         ))}
       </ul>

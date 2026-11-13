@@ -7,8 +7,10 @@ import { LandingNavbar } from '@/components/landing/LandingNavbar'
 import { ModulesSection } from '@/components/landing/ModulesSection'
 import { PartnerSection } from '@/components/landing/PartnerSection'
 import { PrivacySection } from '@/components/landing/PrivacySection'
+import { FoundationSection } from '@/components/landing/FoundationSection'
 import { ProblemSection } from '@/components/landing/ProblemSection'
 import { RolesSection } from '@/components/landing/RolesSection'
+import { SourcesSection } from '@/components/landing/SourcesSection'
 import { TeamSection } from '@/components/landing/TeamSection'
 import { useLoginRedirectPrompt } from '@/controllers/useLoginRedirectPrompt'
 
@@ -28,12 +30,14 @@ export default function LandingView() {
       <main id="contenido">
         <HeroSection />
         <ProblemSection />
+        <FoundationSection />
         <HowItWorksSection />
         <ModulesSection />
         <IntelligenceSection />
         <RolesSection />
         <PrivacySection />
         <PartnerSection />
+        <SourcesSection />
         <TeamSection />
       </main>
       <LandingFooter />

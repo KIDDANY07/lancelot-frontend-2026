@@ -5,7 +5,6 @@ import {
   INTELLIGENCE_CONTENT,
   INTELLIGENCE_PILLARS,
   LANDING_SECTION_IDS,
-  SCIENTIFIC_REFERENCES,
 } from '@/constants/landing'
 
 export function IntelligenceSection() {
@@ -26,6 +25,7 @@ export function IntelligenceSection() {
                   <p className="mt-1 text-sm text-pretty text-muted-foreground">
                     {phase.description}
                   </p>
+                  <p className="mt-2 text-xs text-muted-foreground italic">{phase.source}</p>
                 </li>
               ))}
             </ul>
@@ -49,21 +49,14 @@ export function IntelligenceSection() {
         </div>
       </Reveal>
 
-      <Reveal className="mt-8">
-        <h3 className="flex items-center justify-center gap-2 text-sm font-semibold text-muted-foreground">
+      <Reveal className="mt-8 text-center">
+        <a
+          href={`#${LANDING_SECTION_IDS.sources}`}
+          className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
+        >
           <BookOpen aria-hidden="true" className="size-4" />
-          Respaldado por la literatura científica
-        </h3>
-        <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {SCIENTIFIC_REFERENCES.map((reference) => (
-            <li key={reference.author} className="rounded-xl glass-subtle p-4">
-              <p className="text-sm font-semibold">
-                {reference.author} ({reference.year})
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">{reference.topic}</p>
-            </li>
-          ))}
-        </ul>
+          Ver todas las fuentes del proyecto
+        </a>
       </Reveal>
     </LandingSection>
   )

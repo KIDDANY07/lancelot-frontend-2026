@@ -30,6 +30,7 @@ export function HowItWorksSection() {
             </p>
             <h3 className="mt-1 text-lg font-semibold">{step.title}</h3>
             <p className="mt-2 text-sm text-pretty text-muted-foreground">{step.description}</p>
+            <p className="mt-auto pt-4 text-xs text-muted-foreground italic">{step.source}</p>
           </Reveal>
         ))}
       </ol>

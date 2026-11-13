@@ -49,6 +49,45 @@ describe('LandingView', () => {
     expect(screen.getByText('Fuentes: Wyscout (2026); Catapult Sports (2026).')).toBeInTheDocument()
   })
 
+  it('presenta a Eduard Giovanni Morales Vera como fuente principal y base del proyecto', async () => {
+    await renderLanding()
+    const foundation = screen.getByRole('region', {
+      name: /investigación de Eduard Giovanni Morales Vera/,
+    })
+    expect(within(foundation).getByText('Fuente principal')).toBeInTheDocument()
+    expect(within(foundation).getByText(/PRISMA y PRISMA-S/)).toBeInTheDocument()
+    expect(
+      within(foundation).getByRole('link', { name: /Repositorio Institucional UPN/ }),
+    ).toHaveAttribute('href', 'http://hdl.handle.net/20.500.12209/22875')
+    expect(within(foundation).getAllByRole('listitem')).toHaveLength(4)
+    expect(screen.queryByText(/[Dd]ueño del producto|Product Owner/)).not.toBeInTheDocument()
+  })
+
+  it('agrupa las fuentes y pone primero la fuente principal', async () => {
+    await renderLanding()
+    const sources = screen.getByRole('region', {
+      name: 'En qué se apoya cada decisión de Lancelot',
+    })
+    const items = within(sources).getAllByRole('listitem')
+    expect(items[0]).toHaveTextContent('Fuente principalMorales Vera (2026)')
+    expect(within(sources).getByText('Foster et al. (2001)')).toBeInTheDocument()
+    expect(within(sources).getByText('Gabbett (2016)')).toBeInTheDocument()
+  })
+
+  it('cita las fuentes de cada paso y de cada fase del apoyo a la decisión', async () => {
+    await renderLanding()
+    const steps = screen.getByRole('region', { name: /ciclo completo/ })
+    expect(
+      within(steps).getByText('Fuentes: Foster et al. (2001); Gabbett (2016).'),
+    ).toBeInTheDocument()
+    const intelligence = screen.getByRole('region', { name: /persona siempre al mando/ })
+    expect(
+      within(intelligence).getByText(
+        'Fuentes: Morales Vera (2026); Vaeyens et al. (2008); Musch y Grondin (2001).',
+      ),
+    ).toBeInTheDocument()
+  })
+
   it('presenta a los desarrolladores con el texto exacto y sus iniciales', async () => {
     await renderLanding()
     const team = screen.getByRole('region', { name: 'Quienes desarrollan Lancelot' })

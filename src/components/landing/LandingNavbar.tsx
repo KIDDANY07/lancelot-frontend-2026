@@ -29,12 +29,12 @@ export function LandingNavbar() {
           <BrandLogo />
         </a>
 
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden items-center gap-1 xl:flex">
           {LANDING_NAV_LINKS.map((link) => (
             <li key={link.id}>
               <a
                 href={`#${link.id}`}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {link.label}
               </a>
@@ -58,7 +58,7 @@ function LandingMobileMenu() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Abrir menú">
+        <Button variant="ghost" size="icon" className="xl:hidden" aria-label="Abrir menú">
           <Menu aria-hidden="true" />
         </Button>
       </SheetTrigger>
