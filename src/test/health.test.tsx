@@ -344,3 +344,162 @@ describe('consentimientos', () => {
     ).toBeInTheDocument()
   })
 })
+
+describe('auditoría', () => {
+  const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3_600_000).toISOString()
+  const AUDIT_LOGS = [
+    {
+      id_log: 5,
+      id_health: 7,
+      accessed_by: 1,
+      accessed_by_name: 'Laura Gómez',
+      action: 'delete',
+      accessed_at: hoursAgo(1),
+    },
+    {
+      id_log: 4,
+      id_health: 7,
+      accessed_by: 2,
+      accessed_by_name: 'Pedro Ruiz',
+      action: 'update',
+      accessed_at: hoursAgo(2),
+    },
+    {
+      id_log: 3,
+      id_health: null,
+      accessed_by: 2,
+      accessed_by_name: 'Pedro Ruiz',
+      action: 'list',
+      accessed_at: hoursAgo(3),
+    },
+    {
+      id_log: 2,
+      id_health: 9,
+      accessed_by: 1,
+      accessed_by_name: 'Laura Gómez',
+      action: 'read',
+      accessed_at: hoursAgo(24 * 10),
+    },
+    {
+      id_log: 1,
+      id_health: 9,
+      accessed_by: null,
+      accessed_by_name: '',
+      action: 'create',
+      accessed_at: hoursAgo(24 * 60),
+    },
+  ] as const
+
+  function tableRows(name: string) {
+    const table = screen.getByRole('table', { name })
+    return within(table)
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) => row.textContent ?? '')
+  }
+  const actionRows = () => tableRows('Detalle de acciones')
+
+  beforeEach(() => {
+    vi.mocked(healthService.listAuditLogs).mockImplementation((filters) => {
+      const logs = AUDIT_LOGS.filter(
+        (log) => filters.id_health === undefined || log.id_health === filters.id_health,
+      )
+      return Promise.resolve({
+        items: filters.page === 1 ? logs.map((log) => ({ ...log })) : [],
+        pagination: { total: 1150, page: Number(filters.page), limit: 100, totalPages: 12 },
+      })
+    })
+    vi.mocked(usersService.listAll).mockResolvedValue([
+      { ...ADMIN_USER, id_user: 1, name: 'Laura', lastname: 'Gómez' },
+      { ...COACH_USER, id_user: 2, name: 'Pedro', lastname: 'Ruiz' },
+    ])
+  })
+
+  it('muestra en tablas qué hizo cada persona y avisa de los roles sin permiso', async () => {
+    signInAs(ADMIN_USER)
+    renderAppAt('/app/salud?tab=auditoria')
+
+    expect(
+      await screen.findByText(
+        /2 personas accedieron 4 veces a los datos de salud: 2 consultas y 2 cambios, de ellos 1 eliminación/,
+      ),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/Se analizan los 5 accesos más recientes de 1\.150/),
+    ).toBeInTheDocument()
+    expect(healthService.listAuditLogs).toHaveBeenCalledTimes(10)
+
+    await waitFor(() =>
+      expect(actionRows().some((row) => row.includes('Laura GómezAdministradorEliminó#7'))).toBe(
+        true,
+      ),
+    )
+    expect(
+      actionRows().some((row) =>
+        row.includes('Pedro RuizEntrenadorConsultó la listaLa lista completa'),
+      ),
+    ).toBe(true)
+    const pedro = tableRows('Qué hizo cada persona').find((row) => row.startsWith('Pedro Ruiz'))
+    expect(pedro).toContain('Hoy su rol no puede ver registros de salud')
+    expect(pedro).toMatch(/salud010012/)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Todo' }))
+    expect(actionRows()).toHaveLength(5)
+    expect(actionRows().some((row) => row.includes('Cuenta eliminadaRegistró#9'))).toBe(true)
+
+    await userEvent.click(
+      screen.getAllByRole('button', { name: 'Ver solo lo que hizo Pedro Ruiz' })[0],
+    )
+    expect(actionRows()).toHaveLength(2)
+    await userEvent.click(screen.getByRole('button', { name: /Limpiar filtros/ }))
+    expect(actionRows()).toHaveLength(4)
+  })
+
+  it('arma la historia de un registro al tocar su número', async () => {
+    signInAs(ADMIN_USER)
+    renderAppAt('/app/salud?tab=auditoria')
+
+    await userEvent.click(
+      (await screen.findAllByRole('button', { name: 'Ver la historia del registro 7' }))[0],
+    )
+    expect(screen.getByLabelText(/Número de registro/)).toHaveValue('7')
+    const history = await screen.findByRole('region', { name: /Historia del registro #7/ })
+    expect(within(history).getByText(/Lo eliminó Laura Gómez/)).toBeInTheDocument()
+    expect(
+      within(history).getByText(/Se editó 1 vez; la última la hizo Pedro Ruiz/),
+    ).toBeInTheDocument()
+    expect(within(history).getByText(/No aparece quién lo registró/)).toBeInTheDocument()
+    expect(healthService.listAuditLogs).toHaveBeenCalledWith(
+      expect.objectContaining({ id_health: 7, page: 1 }),
+    )
+  })
+
+  it('solo consulta los registros de salud cuando el administrador lo pide', async () => {
+    vi.mocked(healthService.listHealthRecordsPage).mockResolvedValue({
+      items: [
+        {
+          id_health: 7,
+          id_user: 30,
+          athlete_name: 'Ana Pérez',
+          condition_type: 'Asma',
+          restriction: false,
+          status: 'active',
+        },
+      ],
+      pagination: { total: 1, page: 1, limit: 100, totalPages: 1 },
+    })
+    signInAs(ADMIN_USER)
+    renderAppAt('/app/salud?tab=auditoria')
+
+    await screen.findByRole('region', { name: 'Detalle de acciones' })
+    expect(healthService.listHealthRecordsPage).not.toHaveBeenCalled()
+    const callsBefore = vi.mocked(healthService.listAuditLogs).mock.calls.length
+    await userEvent.click(screen.getByRole('button', { name: 'Ver deportista y condición' }))
+
+    await waitFor(() =>
+      expect(actionRows().some((row) => row.includes('#7Asma de Ana Pérez'))).toBe(true),
+    )
+    expect(screen.getByText(/Tu consulta quedó anotada en la auditoría/)).toBeInTheDocument()
+    expect(vi.mocked(healthService.listAuditLogs).mock.calls.length).toBeGreaterThan(callsBefore)
+  })
+})
